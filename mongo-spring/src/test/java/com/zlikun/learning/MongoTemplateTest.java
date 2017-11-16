@@ -2,7 +2,7 @@ package com.zlikun.learning;
 
 import com.mongodb.WriteResult;
 import com.zlikun.learning.domain.UserInfo;
-import org.junit.Ignore;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,19 +21,40 @@ import static org.junit.Assert.*;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 /**
- *
+ * 示例演示了Xml配置和Annotation两种配置方法
  * @author zlikun <zlikun-dev@hotmail.com>
  * @date 2017-11-16 13:39
  */
 @RunWith(SpringRunner.class)
-@ContextConfiguration("classpath:beans.xml")
+//@ContextConfiguration("classpath:beans.xml")
+@ContextConfiguration(classes = AppConfigure.class)
 public class MongoTemplateTest {
 
     @Autowired
     MongoTemplate template ;
 
+    @After
+    public void destroy() {
+        template.dropCollection(UserInfo.class);
+    }
+
     @Test
+    public void test() {
+
+        insert();
+
+        update();
+
+        find();
+
+        findOne();
+
+        remove();
+
+    }
+
     public void insert() {
+        // @Id 注解将指定`_id`字段，否则将自动生成
         UserInfo info = new UserInfo() ;
         info.setUserId(1L);
         info.setUsername("zlikun");
@@ -43,7 +64,6 @@ public class MongoTemplateTest {
         template.insert(info);
     }
 
-    @Test
     public void find() {
         Optional<UserInfo> optional = template.find(new BasicQuery("{\"username\":\"zlikun\"}") ,
                     UserInfo.class ,
@@ -58,7 +78,6 @@ public class MongoTemplateTest {
         assertEquals("123456" ,info.getPassword());
     }
 
-    @Test
     public void findOne() {
         UserInfo info = template.findOne(new BasicQuery("{\"username\":\"zlikun\"}") ,
                 UserInfo.class ,
@@ -67,7 +86,6 @@ public class MongoTemplateTest {
         assertEquals("123456" ,info.getPassword());
     }
 
-    @Test
     public void update() {
         WriteResult result = template.updateFirst(new Query(where("username").is("zlikun")) ,
                 new Update().set("gender" ,"MALE") ,
@@ -75,7 +93,6 @@ public class MongoTemplateTest {
         assertNotNull(result) ;
     }
 
-    @Test @Ignore
     public void remove() {
         WriteResult result = template.remove(new Query(where("username").is("zlikun")) ,UserInfo.class) ;
         assertNotNull(result) ;

@@ -1,6 +1,7 @@
 package com.zlikun.learning.domain;
 
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 @Document(collection = "users")
 public class UserInfo {
 
+    @Id
     private Long userId ;
     private String username ;
     private String password ;
