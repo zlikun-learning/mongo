@@ -11,6 +11,7 @@
 
     <modules>
         <module>mongo-sample</module>
+        <module>mongo-spring</module>
     </modules>
 
     <properties>
